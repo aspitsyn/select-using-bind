@@ -1,1 +1,1 @@
-select employee_id, last_name from hr.employees where hire_date > :B1 
+select employee_id, hire_date, last_name from scott.employees where first_name = :B1
