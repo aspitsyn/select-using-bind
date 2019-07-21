@@ -8,10 +8,6 @@ This repository contains example for run SELECT query and gather statistics at A
 
 Install Node.js from nodejs.org.
 Install node-oracledb using the [Quick Start Node-oracledb Installation] [1] steps.
-
-Getting Started
-Install Node.js from nodejs.org.
-Install node-oracledb using the Quick Start Node-oracledb Installation steps.
 Install Async.js
 
 Edit dbconfig.js and set your username, password and the database connection string:
@@ -38,6 +34,6 @@ or
 
 node select-using-bind.js <<sql_id>> EXACT
 
-Use unnamed command line parameters sql_id in case you'd like to get sql_fulltext from sqlarea or sql_id and EXACT if you'd like to get sql_fulltext and set parameter cursor_sharing = EXACT for current session
+Use unnamed command line parameters sql_id if you'd like to get sql_fulltext from sqlarea or sql_id and EXACT if you'd like to get sql_fulltext and set parameter cursor_sharing = EXACT for your current session
 
 [1]: https://oracle.github.io/node-oracledb/INSTALL.html#quickstart
