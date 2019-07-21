@@ -38,6 +38,6 @@ or
 
 node select-using-bind.js <<sql_id>> EXACT
 
-Use unnamed command line parameters sql_id in case you'd like to get sql_fulltext from sqlarea or sql_id and EXACT if you'd like to get sql_fulltext and set DB parameter cursor_sharing = EXACT
+Use unnamed command line parameters sql_id in case you'd like to get sql_fulltext from sqlarea or sql_id and EXACT if you'd like to get sql_fulltext and set parameter cursor_sharing = EXACT for current session
 
 [1]: https://oracle.github.io/node-oracledb/INSTALL.html#quickstart
