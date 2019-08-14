@@ -16,11 +16,8 @@ var SQLtextstat = "alter session set statistics_level = 'ALL'";
 var SQLtext1 = "";
 var SQLtext2 = "SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(null,null,'ALL ALLSTATS LAST'))";
 
-var slogfile = '/temp/test001.log';
+var slogfile = '/temp/test071.log';
 var pathToFile = 'sqltext.txt';
-
-var sqlid = "";
-var SQLtextmem = "";
 
 // force all CLOBs to be returned as Strings
 oracledb.fetchAsString = [ oracledb.CLOB ];
@@ -49,10 +46,17 @@ function loadSQLtext() {
     SQLtext1 = SQLtext;    
   };
 
+  var nameIndex = (t1) => {
+    return process.argv.indexOf(t1);
+  };
+
+  var nameValue = (nameIndex) => {    
+      return process.argv[nameIndex + 1];
+  };  
+
 var checkargs = () => {
-    return (cmdArgs.length == 0 ) ? doReadFile(loadSQLtext)
-    : (cmdArgs.length == 1 || cmdArgs.length == 2 ) ? (sqlid = cmdArgs[0])    
-    : ">2 parameters passed"
+  return (cmdArgs.length == 0) ? doReadFile(loadSQLtext)    
+  : "checkargs: more parameters passed"
   };
 
 var dorelease = function(conn) {
@@ -89,9 +93,9 @@ var setallstat = function (conn, cb) {
       });
   };
 
-// Pre-command1
-var setcursorsharing = function (arg1,conn, cb) {  
-  if (cmdArgs.length == 2) {    
+//Set cursor sharing
+var setcursorsharing = function (arg1,conn, cb) {   
+  if (nameIndex('-cs') > -1) {   
   conn.execute(
     SQLtextcursor,
     {},  
@@ -108,8 +112,9 @@ var setcursorsharing = function (arg1,conn, cb) {
 
 //Get sql text
 var getselect = function (arg1,conn,cb)  {  
-  SQLtextmem = "select sql_fulltext from v$sql where sql_id='" + sqlid + "'";  
-  if (cmdArgs.length == 1 || cmdArgs.length == 2) {
+    if (nameIndex('-sql') > -1) {
+      const sqlid = nameValue(nameIndex('-sql'));
+      const SQLtextmem = `select sql_fulltext from v$sql where sql_id='${sqlid}'`;    
   conn.execute(
     SQLtextmem,
     function(err,result)  {
@@ -128,14 +133,48 @@ var getselect = function (arg1,conn,cb)  {
 }; 
 
 var getsqltext = (argx) => {
-  return (cmdArgs.length == 0) ? SQLtext1
-    : (cmdArgs.length == 1) ? argx
-    : (cmdArgs.length == 2) ? argx
-    : "Nothing"
+    return (cmdArgs.length == 0) ? SQLtext1    
+       : (nameIndex('-sql') > -1) ? argx
+       : "Nothing"
+};
+
+//Get user defined DB type
+var getclass = function(arg1,conn,cb) {
+  const typename = nameValue(nameIndex('-udt'));
+  if (nameIndex('-udt') > -1) {
+    conn.getDbObjectClass(typename, function(err, TID) {
+    if (err) {
+      console.error(err.message);
+      return cb(err, conn);
+      };   
+        const tid1 = {          
+              ID: 201        
+            };
+        const tid2 = {          
+                ID: 202        
+              };        
+        const tid3 = {          
+                ID: 203        
+              };
+   var tids1 = new TID();
+        tids1.append(tid1);
+        tids1.append(tid2);
+        tids1.append(tid3);
+    
+    console.log(`\nA ${typename} object:`);
+      console.log(tids1);
+      console.log(`\nA ${typename} object isCollection:`);
+      console.log(tids1.isCollection);        
+      bindobj.B2 = tids1;      
+  return cb(null, arg1, conn)
+    })
+  } else {
+    return cb(null, arg1,conn)
+  }
 };
 
 // Object query
-var basic = function (arg1, conn, cb) {
+var basic = function (arg1, conn, cb) {  
   conn.execute(
     getsqltext(arg1),
     bindobj,
@@ -175,7 +214,8 @@ async.waterfall(
     doconnect,    
     setallstat,
     setcursorsharing,    
-    getselect,    
+    getselect,
+    getclass,    
     basic,
     extended
   ],
