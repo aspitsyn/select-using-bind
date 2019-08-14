@@ -1,4 +1,4 @@
-# select-using-bind version 0.2
+# select-using-bind version 0.3
 
 Yet another way to run queries to the Oracle Database
 
@@ -28,12 +28,16 @@ node select-using-bind.js
 
 or 
 
-node select-using-bind.js <<sql_id>>
+node select-using-bind.js -sql <<sql_id>>
 
 or
 
-node select-using-bind.js <<sql_id>> EXACT
+node select-using-bind.js -sql <<sql_id>> -cs EXACT
 
-Use unnamed command line parameters sql_id if you'd like to get sql_fulltext from sqlarea or sql_id and EXACT if you'd like to get sql_fulltext and set parameter cursor_sharing = EXACT for your current session
+or
+
+node select-using-bind.js -sql <<sql_id>> -cs EXACT -udt HR.T$ID_TABLE
+
+Use named command line parameters -sql if you'd like to get sql_fulltext from sqlarea or -cs if you'd like to set parameter cursor_sharing = EXACT for your current session and -udt if you'd like to set user defined database type
 
 [1]: https://oracle.github.io/node-oracledb/INSTALL.html#quickstart
