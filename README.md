@@ -36,8 +36,8 @@ node select-using-bind.js -sql <<sql_id>> -cs EXACT
 
 or
 
-node select-using-bind.js -sql <<sql_id>> -cs EXACT -udt HR.T$ID_TABLE
+node select-using-bind.js -sql <<sql_id>> -cs EXACT -udt1 <<:bind_name>>:<<SCHEMA.TYPE_NAME>>:<<value>>
 
-Use named command line parameters -sql if you'd like to get sql_fulltext from sqlarea or -cs if you'd like to set parameter cursor_sharing = EXACT for your current session and -udt if you'd like to set user defined database type
+Use named command line parameters -sql if you'd like to get sql_fulltext from sqlarea or -cs if you'd like to set parameter cursor_sharing = EXACT for your current session and -udt1, -udt2, -udt3, -udt4 if you'd like to set user defined database type.  for example -udt1 B2:HR.T$ID_TABLE:50 -udt2 B3:GNIVC.T$ID_TABLE:100 Up to four user data type bind variables supported
 
 [1]: https://oracle.github.io/node-oracledb/INSTALL.html#quickstart
