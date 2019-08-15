@@ -55,8 +55,8 @@ function loadSQLtext() {
   };  
 
 var checkargs = () => {
-  return (cmdArgs.length == 0) ? doReadFile(loadSQLtext)    
-  : "checkargs: more parameters passed"
+  return (nameIndex('-sql') === -1) ? doReadFile(loadSQLtext)
+  : "checkargs: sql_id parameter passed"
   };
 
 var dorelease = function(conn) {
@@ -80,8 +80,8 @@ function simpleout(rows){
 };
 
 // Pre-command1
-var setallstat = function (conn, cb) {
-    conn.execute(
+var setallstat = function (conn, cb) {   
+  conn.execute(
       SQLtextstat,
       {},  
       function(err, result) {
@@ -113,8 +113,8 @@ var setcursorsharing = function (arg1,conn, cb) {
 //Get sql text
 var getselect = function (arg1,conn,cb)  {  
     if (nameIndex('-sql') > -1) {
-      const sqlid = nameValue(nameIndex('-sql'));
-      const SQLtextmem = `select sql_fulltext from v$sql where sql_id='${sqlid}'`;    
+      const sqlid = nameValue(nameIndex('-sql'));        
+      const SQLtextmem = `select sql_fulltext from v$sql where sql_id='${sqlid}'`;     
   conn.execute(
     SQLtextmem,
     function(err,result)  {
@@ -133,7 +133,7 @@ var getselect = function (arg1,conn,cb)  {
 }; 
 
 var getsqltext = (argx) => {
-    return (cmdArgs.length == 0) ? SQLtext1    
+    return (nameIndex('-sql') === -1) ? SQLtext1    
        : (nameIndex('-sql') > -1) ? argx
        : "Nothing"
 };
