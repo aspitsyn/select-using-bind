@@ -139,37 +139,102 @@ var getsqltext = (argx) => {
 };
 
 //Get user defined DB type
-var getclass = function(arg1,conn,cb) {
-  const typename = nameValue(nameIndex('-udt'));
-  if (nameIndex('-udt') > -1) {
+var getclass1 = function(arg1,conn,cb){  
+  if (nameIndex('-udt1') > -1){   
+      var udtparts = nameValue(nameIndex('-udt1')).split(':');
+        var prop = udtparts[0];
+        var typename = udtparts[1];
+        var val1 = udtparts[2];  
     conn.getDbObjectClass(typename, function(err, TID) {
     if (err) {
       console.error(err.message);
       return cb(err, conn);
-      };   
-        const tid1 = {          
-              ID: 201        
+      };          
+      const tid1 = {          
+              ID: val1
             };
-        const tid2 = {          
-                ID: 202        
-              };        
-        const tid3 = {          
-                ID: 203        
-              };
    var tids1 = new TID();
-        tids1.append(tid1);
-        tids1.append(tid2);
-        tids1.append(tid3);
-    
-    console.log(`\nA ${typename} object:`);
-      console.log(tids1);
-      console.log(`\nA ${typename} object isCollection:`);
-      console.log(tids1.isCollection);        
-      bindobj.B2 = tids1;      
-  return cb(null, arg1, conn)
-    })
-  } else {
-    return cb(null, arg1,conn)
+       tids1.append(tid1);    
+      bindobj[prop] = tids1;      
+    return cb(null, arg1, conn)
+      });
+    } else {
+      return cb(null, arg1,conn)
+  }
+};
+
+//Get user defined DB type
+var getclass2 = function(arg1,conn,cb){  
+  if (nameIndex('-udt2') > -1){   
+      var udtparts = nameValue(nameIndex('-udt2')).split(':');
+        var prop = udtparts[0];
+        var typename = udtparts[1];
+        var val1 = udtparts[2];  
+    conn.getDbObjectClass(typename, function(err, TID) {
+    if (err) {
+      console.error(err.message);
+      return cb(err, conn);
+      };           
+      const tid1 = {          
+              ID: val1
+            };
+   var tids1 = new TID();
+        tids1.append(tid1); 
+      bindobj[prop] = tids1;      
+    return cb(null, arg1, conn)
+      });
+    } else {
+      return cb(null, arg1,conn)
+  }
+};
+
+//Get user defined DB type
+var getclass3 = function(arg1,conn,cb){  
+  if (nameIndex('-udt3') > -1){   
+      var udtparts = nameValue(nameIndex('-udt3')).split(':');
+        var prop = udtparts[0];
+        var typename = udtparts[1];
+        var val1 = udtparts[2];  
+    conn.getDbObjectClass(typename, function(err, TID) {
+    if (err) {
+      console.error(err.message);
+      return cb(err, conn);
+      };           
+      const tid1 = {          
+              ID: val1
+            };
+   var tids1 = new TID();
+        tids1.append(tid1); 
+      bindobj[prop] = tids1;      
+    return cb(null, arg1, conn)
+      });
+    } else {
+      return cb(null, arg1,conn)
+  }
+};
+
+//Get user defined DB type
+var getclass4 = function(arg1,conn,cb){  
+  if (nameIndex('-udt4') > -1){   
+      var udtparts = nameValue(nameIndex('-udt4')).split(':');
+        var prop = udtparts[0];
+        var typename = udtparts[1];
+        var val1 = udtparts[2];  
+    conn.getDbObjectClass(typename, function(err, TID) {
+    if (err) {
+      console.error(err.message);
+      return cb(err, conn);
+      };           
+      const tid1 = {          
+              ID: val1
+            };
+   var tids1 = new TID();
+        tids1.append(tid1); 
+      bindobj[prop] = tids1;      
+    return cb(null, arg1, conn)
+      });
+    } else {
+      return cb(null, arg1,conn)
   }
 };
 
@@ -183,8 +248,8 @@ var basic = function (arg1, conn, cb) {
         return cb(err, conn);
       } else {
         //console.log(result.metaData);
-        //console.log("Number of rows: " + result.rows.length);        
-           // simpleout(result.rows);   
+        console.log("Number of rows: " + result.rows.length);        
+          //simpleout(result.rows);   
         return cb(null, conn);
       }
     });
@@ -215,7 +280,10 @@ async.waterfall(
     setallstat,
     setcursorsharing,    
     getselect,
-    getclass,    
+    getclass1,
+    getclass2,
+    getclass3,
+    getclass4,    
     basic,
     extended
   ],

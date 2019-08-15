@@ -7,6 +7,6 @@ var num = 20;
 
 module.exports = {
 //   B1: { dir: oracledb.BIND_IN, val: firstname}
-B1: { dir: oracledb.BIND_IN, val: num}
+//B1: { dir: oracledb.BIND_IN, val: num}
 //   ,B2 { dir: oracledb.BIND_IN, val: myID}
 };
