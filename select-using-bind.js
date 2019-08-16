@@ -238,6 +238,31 @@ var getclass4 = function(arg1,conn,cb){
   }
 };
 
+//Get user defined DB type
+var getclass5 = function(arg1,conn,cb){  
+  if (nameIndex('-udt5') > -1){   
+      var udtparts = nameValue(nameIndex('-udt5')).split(':');
+        var prop = udtparts[0];
+        var typename = udtparts[1];
+        var val1 = udtparts[2];  
+    conn.getDbObjectClass(typename, function(err, TID) {
+    if (err) {
+      console.error(err.message);
+      return cb(err, conn);
+      };           
+      const tid1 = {          
+              ID: val1
+            };
+   var tids1 = new TID();
+        tids1.append(tid1); 
+      bindobj[prop] = tids1;      
+    return cb(null, arg1, conn)
+      });
+    } else {
+      return cb(null, arg1,conn)
+  }
+};
+
 // Object query
 var basic = function (arg1, conn, cb) {  
   conn.execute(
@@ -283,7 +308,8 @@ async.waterfall(
     getclass1,
     getclass2,
     getclass3,
-    getclass4,    
+    getclass4,
+    getclass5,    
     basic,
     extended
   ],
