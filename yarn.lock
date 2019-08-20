@@ -2,10 +2,6 @@
 # yarn lockfile v1
 
 
-async@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/async/-/async-3.1.0.tgz#42b3b12ae1b74927b5217d8c0016baaf62463772"
-
 oracledb@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/oracledb/-/oracledb-4.0.0.tgz#cf102be555a46a37b6a9d2ebf452cb0f2618297f"
