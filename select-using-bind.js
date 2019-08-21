@@ -15,7 +15,15 @@ var pathToFile = "sqltext.txt";
 var clob = "";
 
 async function run() {
-  let connection, result, result1, result2, result3, result4, result5, result6;
+  let connection,
+    result,
+    result1,
+    result2,
+    result3,
+    result4,
+    result5,
+    result6,
+    result7;
 
   //read sqltext from file
   function doReadFile(callback) {
@@ -152,21 +160,29 @@ async function run() {
       //    console.log(tids1);
     }
     // console.log(bindobj);
-
+    // Run SQL
     result5 = await connection.execute(
       //   // The statement to execute
       getsqltext(clob),
       bindobj
     );
     console.log("Number of rows: " + result5.rows.length);
-
+    // Get all stats
     result6 = await connection.execute(
       // The statement to execute
       "SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(null,null,'ALL ALLSTATS LAST'))",
       {}
     );
-
     simpleout(result6.rows);
+    // Get tracefile name
+    result7 = await connection.execute(
+      `SELECT s.sid, p.tracefile FROM   v$session s JOIN v$process p ON s.paddr = p.addr WHERE  s.sid = (select distinct sid from v$mystat)`,
+      []
+      // outFormat determines whether rows will be in arrays or JavaScript objects.
+      // It does not affect how the FARM column itself is represented.
+      //        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+    simpleout(result7.rows);
   } catch (err) {
     console.error(err);
   } finally {
