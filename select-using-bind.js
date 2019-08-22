@@ -84,13 +84,24 @@ async function run() {
     oracledb.fetchAsString = [oracledb.CLOB];
 
     //setallstat
-    result1 = await connection.execute(
+    result = await connection.execute(
       "alter session set statistics_level = 'ALL'",
       {},
       {
         resultSet: false
       }
     );
+
+    //10046 trace session
+    if (nameIndex("-trace") > -1) {
+      result1 = await connection.execute(
+        "alter session set events '10046 trace name context forever, level 8'",
+        {},
+        {
+          resultSet: false
+        }
+      );
+    }
 
     //Set cursor sharing
     if (nameIndex("-cs") > -1) {
@@ -124,7 +135,7 @@ async function run() {
       if (result4.rows.length === 0) throw new Error("No results");
       else {
         clob = result4.rows[0][0];
-        console.log(clob);
+        //console.log(clob);
       }
     }
 
@@ -160,13 +171,18 @@ async function run() {
       //    console.log(tids1);
     }
     // console.log(bindobj);
+    var t0 = process.hrtime();
     // Run SQL
     result5 = await connection.execute(
       //   // The statement to execute
       getsqltext(clob),
       bindobj
     );
-    console.log("Number of rows: " + result5.rows.length);
+    var arr = [];
+    arr[0] = "Number of rows: " + result5.rows.length;
+    var t2 = process.hrtime(t0);
+    arr[1] = `SQL execution time (hr): ${t2[0]}s ${t2[1] / 1000000}ms`;
+    simpleout(arr);
     // Get all stats
     result6 = await connection.execute(
       // The statement to execute
