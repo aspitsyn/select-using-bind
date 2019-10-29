@@ -140,35 +140,37 @@ async function run() {
     }
 
     //Get user defined types and set bind variables
-    for (let key in bindobjtypes) {
-      const { oradbtype, isObj, vals } = bindobjtypes[key];
-      const TIDTable = await connection.getDbObjectClass(oradbtype);
-      const tids1 = new TIDTable();
+    if (nameIndex("-udt") > -1) {
+      for (let key in bindobjtypes) {
+        const { oradbtype, isObj, vals } = bindobjtypes[key];
+        const TIDTable = await connection.getDbObjectClass(oradbtype);
+        const tids1 = new TIDTable();
 
-      if (Array.isArray(vals)) {
-        for (let v of vals) {
+        if (Array.isArray(vals)) {
+          for (let v of vals) {
+            if (isObj) {
+              const tid1 = {
+                ID: v
+              };
+              tids1.append(tid1);
+            } else {
+              tids1.append(v);
+            }
+          }
+        } else {
           if (isObj) {
             const tid1 = {
-              ID: v
+              ID: vals
             };
             tids1.append(tid1);
           } else {
-            tids1.append(v);
+            tids1.append(vals);
           }
         }
-      } else {
-        if (isObj) {
-          const tid1 = {
-            ID: vals
-          };
-          tids1.append(tid1);
-        } else {
-          tids1.append(vals);
-        }
+        bindobj[key] = tids1;
+        //      console.log(key);
+        //    console.log(tids1);
       }
-      bindobj[key] = tids1;
-      //      console.log(key);
-      //    console.log(tids1);
     }
     // console.log(bindobj);
     var t0 = process.hrtime();
