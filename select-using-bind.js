@@ -178,10 +178,15 @@ async function run() {
     result5 = await connection.execute(
       //   // The statement to execute
       getsqltext(clob),
-      bindobj
+      bindobj,
+      { autoCommit: false }
     );
     var arr = [];
-    arr[0] = "Number of rows: " + result5.rows.length;
+    if (typeof result5.rows === "undefined") {
+      arr[0] = "Number of rows: 0";
+    } else {
+      arr[0] = "Number of rows: " + result5.rows.length;
+    }
     var t2 = process.hrtime(t0);
     arr[1] = `SQL execution time (hr): ${t2[0]}s ${t2[1] / 1000000}ms`;
     simpleout(arr);
