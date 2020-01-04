@@ -28,42 +28,48 @@ node select-using-bind.js
 
 or
 
-node select-using-bind.js -sql <<sql_id>>
+node select-using-bind.js -sql <B><I>sql_id</I></B>
 
 or
 
-node select-using-bind.js -sql <<sql_id>> -cs EXACT
+node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT
 
 or
 
-node select-using-bind.js -sql <<sql_id>> -schema HR
+node select-using-bind.js -sql <B><I>sql_id</I></B> -schema HR
 
 or
 
-node select-using-bind.js -sql <<sql_id>> -cs EXACT -schema HR
+node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR
 
 or
 
-node select-using-bind.js -sql <<sql_id>> -cs EXACT -schema HR -udt
+node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR -udt
 
 or
 
-node select-using-bind.js -sql <<sql_id>> -cs EXACT -schema HR -udt -trace
+node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR -udt -trace
 
 or
 
-node select-using-bind.js -sql <<sql_id>> -cs EXACT -schema HR -udt -trace 10053 -sqltrace <<sql_id>>
+node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR -udt -trace 10053 -sqltrace <B><I>sql_id</I></B>
 
-Use named command line parameters -sql if you'd like to get sql_fulltext from sqlarea or -cs if you'd like to set parameter cursor_sharing = EXACT for your current session or -schema <<schema_name>> if you require change current schema at runtime or -udt if you requre to set user defined type in bind variables or -trace if you'd like to trace session or -trace 10053 if you'd like to trace SQL Optimizer for sql_id specified by -sqltrace <<sql_id>>.
+Use named command line parameters -sql if you'd like to get sql_fulltext from sqlarea or -cs if you'd like to set parameter 
+cursor_sharing = EXACT for your current session or -schema <B><I>schema_name</I></B> if you require change current schema at runtime 
+or -udt if you requre to set user defined type in bind variables or -trace if you'd like to trace session 
+or -trace 10053 if you'd like to trace SQL Optimizer for sql_id specified by -sqltrace <B><I>sql_id</I></B>.
 
 Using bind variables examples:
 bindobj.js - for simple bind variables number, string, clob, blob or date types,
 bindobjtypes.js - for user defined type bind variables.
 sqltext.sql - example query
 
-Note that 10053 SQL Optimizer tracing work out if that sql wouldn't exist in sqlarea cache. But if it does, it require to clean up first that sql from sqlarea:
+Note that 10053 SQL Optimizer tracing work out if that sql wouldn't exist in sqlarea cache. 
+But if it does, it requires to clean up first that sql from sqlarea:
 
-select INST_ID, ADDRESS, HASH_VALUE from GV\$SQLAREA where SQL_Id='<<sql_id>>';
-exec DBMS_SHARED_POOL.PURGE('<<ADDRESS>>,<<HASH_VALUE>>','C');
+select INST_ID, ADDRESS, HASH_VALUE from GV\$SQLAREA where SQL_Id='<B><I>sql_id</I></B>';
+
+exec DBMS_SHARED_POOL.PURGE('<B><I>ADDRESS</I></B>,<B><I>HASH_VALUE</I></B>','C');
 
 [1]: https://oracle.github.io/node-oracledb/INSTALL.html#quickstart
+
