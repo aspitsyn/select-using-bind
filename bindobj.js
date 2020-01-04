@@ -4,7 +4,7 @@ var oracledb = require("oracledb");
 
 module.exports = {
   // B1: { dir: oracledb.BIND_IN, val: firstname },
-  B1: { dir: oracledb.BIND_IN, val: 3000 }
+  B1: { dir: oracledb.BIND_IN, val: 1 }
   //   ,B2 { dir: oracledb.BIND_IN, val: myID},
   // B2: { dir: oracledb.BIND_IN, val: 1 },
   // B3: { dir: oracledb.BIND_IN, val: "some text" }

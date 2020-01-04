@@ -59,6 +59,11 @@ async function run() {
       : "Nothing";
   };
 
+  // var getLogPath{
+  //   if sql_id
+
+  // }
+
   // Output to file and console
   function simpleout(rows) {
     console.log(rows);
@@ -92,20 +97,48 @@ async function run() {
       }
     );
 
-    //10046 trace session
-    if (nameIndex("-trace") > -1) {
+    // Fetch sql text
+    if (nameIndex("-sql") > -1) {
+      const sqlid = nameValue(nameIndex("-sql"));
       result1 = await connection.execute(
-        "alter session set events '10046 trace name context forever, level 8'",
-        {},
-        {
-          resultSet: false
-        }
+        `select sql_fulltext from v$sql where sql_id='${sqlid}'`
       );
+      if (result1.rows.length === 0) throw new Error("No results");
+      else {
+        clob = result1.rows[0][0];
+        //console.log(clob);
+      }
+    }
+
+    //trace session or sql
+    if (nameIndex("-trace") > -1) {
+      if (nameValue(nameIndex("-trace")) == "10053") {
+        if (nameIndex("-sqltrace") > -1) {
+          const sqlid = nameValue(nameIndex("-sqltrace"));
+          var traceSQL = `ALTER SESSION SET EVENTS 'trace[rdbms.SQL_Optimizer.*][sql:${sqlid}]'`;
+          console.log(traceSQL);
+          result2 = await connection.execute(
+            traceSQL,
+            {},
+            {
+              resultSet: false
+            }
+          );
+        } else throw new Error("SQL_ID requres for tracing 10053");
+      } else {
+        result2 = await connection.execute(
+          "alter session set events '10046 trace name context forever, level 8'",
+          {},
+          {
+            resultSet: false
+          }
+        );
+      }
     }
 
     //Set cursor sharing
     if (nameIndex("-cs") > -1) {
-      result2 = await connection.execute(
+      result3 = await connection.execute(
         "alter session set cursor_sharing = 'EXACT'",
         {},
         {
@@ -117,26 +150,13 @@ async function run() {
     //Set current schema
     if (nameIndex("-schema") > -1) {
       const schema = nameValue(nameIndex("-schema"));
-      result3 = await connection.execute(
+      result4 = await connection.execute(
         `alter session set current_schema = ${schema}`,
         {},
         {
           resultSet: false
         }
       );
-    }
-
-    // Fetch sql text
-    if (nameIndex("-sql") > -1) {
-      const sqlid = nameValue(nameIndex("-sql"));
-      result4 = await connection.execute(
-        `select sql_fulltext from v$sql where sql_id='${sqlid}'`
-      );
-      if (result4.rows.length === 0) throw new Error("No results");
-      else {
-        clob = result4.rows[0][0];
-        //console.log(clob);
-      }
     }
 
     //Get user defined types and set bind variables
@@ -174,12 +194,14 @@ async function run() {
     }
     // console.log(bindobj);
     var t0 = process.hrtime();
+
     // Run SQL
     result5 = await connection.execute(
       //   // The statement to execute
       getsqltext(clob),
       bindobj,
       { autoCommit: false }
+      //        , maxRows: 10 } // if requres skip remainder rows from output
     );
     var arr = [];
     if (typeof result5.rows === "undefined") {
