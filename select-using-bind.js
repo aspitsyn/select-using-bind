@@ -101,7 +101,7 @@ async function run() {
     // Set sqltune_category
     if (nameIndex("-sqltune") > -1) {
       const catname = nameValue(nameIndex("-sqltune"));
-      result1 = await connection.execute(
+      result0 = await connection.execute(
         `alter session set sqltune_category='${catname}'`,
         {},
         {
