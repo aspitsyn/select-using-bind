@@ -1,4 +1,4 @@
-/* Copyright (c)2019 */
+/* Copyright (c)2019,2020 */
 
 /* Yet another way to run queries to the Oracle Database */
 "use strict";
@@ -17,6 +17,7 @@ var clob = "";
 async function run() {
   let connection,
     result,
+    result0,
     result1,
     result2,
     result3,
@@ -27,7 +28,7 @@ async function run() {
 
   //read sqltext from file
   function doReadFile(callback) {
-    fs.readFile(pathToFile, "utf8", function(err, data) {
+    fs.readFile(pathToFile, "utf8", function (err, data) {
       SQLtext = data;
       callback();
     });
@@ -37,11 +38,11 @@ async function run() {
     SQLtext1 = SQLtext;
   }
 
-  var nameIndex = t1 => {
+  var nameIndex = (t1) => {
     return process.argv.indexOf(t1);
   };
 
-  var nameValue = nameIndex => {
+  var nameValue = (nameIndex) => {
     return process.argv[nameIndex + 1];
   };
 
@@ -51,7 +52,7 @@ async function run() {
       : "checkargs: sql_id parameter passed";
   };
 
-  var getsqltext = argx => {
+  var getsqltext = (argx) => {
     return nameIndex("-sql") === -1
       ? SQLtext1
       : nameIndex("-sql") > -1
@@ -68,7 +69,7 @@ async function run() {
   function simpleout(rows) {
     console.log(rows);
     for (var i = 0; i < rows.length; i++) {
-      fs.writeFileSync(slogfile, rows[i] + "\r\n", { flag: "a" }, function(
+      fs.writeFileSync(slogfile, rows[i] + "\r\n", { flag: "a" }, function (
         err
       ) {
         if (err) {
@@ -93,9 +94,21 @@ async function run() {
       "alter session set statistics_level = 'ALL'",
       {},
       {
-        resultSet: false
+        resultSet: false,
       }
     );
+
+    // Set sqltune_category
+    if (nameIndex("-sqltune") > -1) {
+      const catname = nameValue(nameIndex("-sqltune"));
+      result1 = await connection.execute(
+        `alter session set sqltune_category='${catname}'`,
+        {},
+        {
+          resultSet: false,
+        }
+      );
+    }
 
     // Fetch sql text
     if (nameIndex("-sql") > -1) {
@@ -121,7 +134,7 @@ async function run() {
             traceSQL,
             {},
             {
-              resultSet: false
+              resultSet: false,
             }
           );
         } else throw new Error("SQL_ID requres for tracing 10053");
@@ -130,7 +143,7 @@ async function run() {
           "alter session set events '10046 trace name context forever, level 8'",
           {},
           {
-            resultSet: false
+            resultSet: false,
           }
         );
       }
@@ -138,11 +151,12 @@ async function run() {
 
     //Set cursor sharing
     if (nameIndex("-cs") > -1) {
+      const cs = nameValue(nameIndex("-cs"));
       result3 = await connection.execute(
-        "alter session set cursor_sharing = 'EXACT'",
+        `alter session set cursor_sharing='${cs}'`,
         {},
         {
-          resultSet: false
+          resultSet: false,
         }
       );
     }
@@ -154,7 +168,7 @@ async function run() {
         `alter session set current_schema = ${schema}`,
         {},
         {
-          resultSet: false
+          resultSet: false,
         }
       );
     }
@@ -166,33 +180,26 @@ async function run() {
         const TIDTable = await connection.getDbObjectClass(oradbtype);
         const tids1 = new TIDTable();
 
+        console.log(Array.isArray(vals));
         if (Array.isArray(vals)) {
           for (let v of vals) {
             if (isObj) {
-              const tid1 = {
-                ID: v
-              };
-              tids1.append(tid1);
+              tids1.append(v);
             } else {
               tids1.append(v);
             }
           }
         } else {
           if (isObj) {
-            const tid1 = {
-              ID: vals
-            };
-            tids1.append(tid1);
+            tids1.append(vals);
           } else {
             tids1.append(vals);
           }
         }
         bindobj[key] = tids1;
-        //      console.log(key);
-        //    console.log(tids1);
       }
     }
-    // console.log(bindobj);
+
     var t0 = process.hrtime();
 
     // Run SQL
@@ -201,7 +208,7 @@ async function run() {
       getsqltext(clob),
       bindobj,
       { autoCommit: false }
-      //        , maxRows: 10 } // if requres skip remainder rows from output
+      //        , maxRows: 10 } // if requres to skip remainder rows from output
     );
     var arr = [];
     if (typeof result5.rows === "undefined") {

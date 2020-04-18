@@ -2,25 +2,52 @@ module.exports = {
   B2: {
     oradbtype: "HR.T$ID_TABLE",
     isObj: true,
-    // keyname: "",
-    vals: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    vals: [
+      { ID: 10 },
+      { ID: 20 },
+      { ID: 30 },
+      { ID: 40 },
+      { ID: 50 },
+      { ID: 60 },
+      { ID: 70 },
+      { ID: 80 },
+      { ID: 90 },
+      { ID: 100 },
+    ],
   },
   B3: {
     oradbtype: "HR.T$ID_TABLE",
     isObj: true,
-    // keyname: "ID",
-    vals: [100, 101, 102, 103, 108, 114, 120, 122, 123]
-  }
+    vals: [
+      { ID: 100 },
+      { ID: 101 },
+      { ID: 102 },
+      { ID: 103 },
+      { ID: 108 },
+      { ID: 114 },
+      { ID: 120 },
+      { ID: 122 },
+      { ID: 123 },
+    ],
+  },
   // B4: {
   //   oradbtype: "HR.T$ID_TABLE",
   //   isObj: true,
-  //   // keyname: "ID",
-  //   vals: [5, 9, 15, 123, 1457]
+  // vals: [
+  //   { ID: 100 },
+  //   { ID: 101 },
+  //   { ID: 102 },
+  //   { ID: 103 },
+  //   { ID: 108 },
+  //   { ID: 114 },
+  //   { ID: 120 },
+  //   { ID: 122 },
+  //   { ID: 123 },
+  //   ],
   // },
   // B5: {
   //   oradbtype: "HR.T$NUM_TABLE",
   //   isObj: false,
-  //   // keyname: "ID",
   //   vals: [5, 9, 15, 123, 1457]
   // }
 };
