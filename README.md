@@ -57,6 +57,10 @@ or
 
 node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR -udt -sqltune TEST
 
+or
+
+node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR -refcursor 
+
 Use named command line parameters -sql if you'd like to get sql_fulltext from sqlarea or -cs if you'd like to set parameter
 cursor_sharing = EXACT for your current session or -schema <B><I>schema_name</I></B> if you require change current schema at runtime
 or -udt if you requre to set user defined type in bind variables or -trace if you'd like to trace session

@@ -5,6 +5,7 @@
 const fs = require("fs");
 const oracledb = require("oracledb");
 const dbConfig = require("./dbconfig.js");
+const numRows = 10; // number of rows to return from each call to getRows() from refcursor
 
 var bindobj = require("./bindobj.js");
 var bindobjtypes = require("./bindobjtypes.js");
@@ -180,7 +181,7 @@ async function run() {
         const TIDTable = await connection.getDbObjectClass(oradbtype);
         const tids1 = new TIDTable();
 
-        console.log(Array.isArray(vals));
+        // console.log(Array.isArray(vals));
         if (Array.isArray(vals)) {
           for (let v of vals) {
             if (isObj) {
@@ -211,10 +212,36 @@ async function run() {
       //        , maxRows: 10 } // if requres to skip remainder rows from output
     );
     var arr = [];
-    if (typeof result5.rows === "undefined") {
-      arr[0] = "Number of rows: 0";
+   
+    // Fetch rows from the REF CURSOR if any
+    // If getRows(numRows) returns:
+    //   Zero rows               => there were no rows, or are no more rows to return
+    //   Fewer than numRows rows => this was the last set of rows to get
+    //   Exactly numRows rows    => there may be more rows to fetch
+    if (nameIndex("-refcursor") > -1) {
+      for (let key in result5.outBinds) {
+        // console.log("Cursor metadata:");
+        // console.log(result5.outBinds[key].metaData);
+        const resultSet = result5.outBinds[key];
+        let rows;
+        let rowscnt = 0;
+        do {
+          rows = await resultSet.getRows(numRows); // get numRows rows at a time
+          if (rows.length > 0) {
+            rowscnt = rowscnt + rows.length;
+          }
+        } while (rows.length === numRows);
+
+        // always close the ResultSet
+        await resultSet.close();
+        arr[0] = "Number of rows: " + rowscnt;
+      }
     } else {
-      arr[0] = "Number of rows: " + result5.rows.length;
+      if (typeof result5.rows === "undefined") {
+        arr[0] = "Number of rows: 0";
+      } else {
+        arr[0] = "Number of rows: " + result5.rows.length;
+      }
     }
     var t2 = process.hrtime(t0);
     arr[1] = `SQL execution time (hr): ${t2[0]}s ${t2[1] / 1000000}ms`;
