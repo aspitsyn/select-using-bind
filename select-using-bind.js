@@ -11,7 +11,7 @@ var bindobj = require("./bindobj.js");
 var bindobjtypes = require("./bindobjtypes.js");
 var SQLtext = "";
 var SQLtext1 = "";
-var slogfile = "/temp/allstats001.log";
+var slogfile = "/tmp/allstats001.log";
 var pathToFile = "sqltext.txt";
 var clob = "";
 
@@ -25,7 +25,8 @@ async function run() {
     result4,
     result5,
     result6,
-    result7;
+    result7,
+    result8;
 
   //read sqltext from file
   function doReadFile(callback) {
@@ -154,7 +155,7 @@ async function run() {
     if (nameIndex("-cs") > -1) {
       const cs = nameValue(nameIndex("-cs"));
       result3 = await connection.execute(
-        `alter session set cursor_sharing='${cs}'`,
+        `alter session set cursor_sharing = '${cs}'`,
         {},
         {
           resultSet: false,
@@ -167,6 +168,21 @@ async function run() {
       const schema = nameValue(nameIndex("-schema"));
       result4 = await connection.execute(
         `alter session set current_schema = ${schema}`,
+        {},
+        {
+          resultSet: false,
+        }
+      );
+    }
+
+    //use_nosegment_indexes
+    // const str_0 = 'TRUE';
+    // const str_t = `alter session set "_use_nosegment_indexes" = ${str_0}`;
+    // console.log(str_t);
+    if (nameIndex("-nosegment") > -1) {
+      const nosegment = nameValue(nameIndex("-nosegment"));
+      result5 = await connection.execute(
+        `alter session set "_use_nosegment_indexes" = ${nosegment}`,
         {},
         {
           resultSet: false,
@@ -204,7 +220,7 @@ async function run() {
     var t0 = process.hrtime();
 
     // Run SQL
-    result5 = await connection.execute(
+    result6 = await connection.execute(
       //   // The statement to execute
       getsqltext(clob),
       bindobj,
@@ -219,10 +235,10 @@ async function run() {
     //   Fewer than numRows rows => this was the last set of rows to get
     //   Exactly numRows rows    => there may be more rows to fetch
     if (nameIndex("-refcursor") > -1) {
-      for (let key in result5.outBinds) {
+      for (let key in result6.outBinds) {
         // console.log("Cursor metadata:");
-        // console.log(result5.outBinds[key].metaData);
-        const resultSet = result5.outBinds[key];
+        // console.log(result6.outBinds[key].metaData);
+        const resultSet = result6.outBinds[key];
         let rows;
         let rowscnt = 0;
         do {
@@ -237,22 +253,22 @@ async function run() {
         arr[0] = "Number of rows: " + rowscnt;
       }
     } else {
-      if (typeof result5.rows === "undefined") {
+      if (typeof result6.rows === "undefined") {
         arr[0] = "Number of rows: 0";
       } else {
-        arr[0] = "Number of rows: " + result5.rows.length;
+        arr[0] = "Number of rows: " + result6.rows.length;
       }
     }
     var t2 = process.hrtime(t0);
     arr[1] = `SQL execution time (hr): ${t2[0]}s ${t2[1] / 1000000}ms`;
     simpleout(arr);
     // Get all stats
-    result6 = await connection.execute(
+    result7 = await connection.execute(
       // The statement to execute
-      "SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(null,null,'ALL ALLSTATS LAST'))",
+      "SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(null,null,'ALL ALLSTATS LAST +outline +peeked_binds +hint_report'))",
       {}
     );
-    simpleout(result6.rows);
+    simpleout(result7.rows);
     // Get tracefile name
     result7 = await connection.execute(
       `SELECT s.sid, p.tracefile FROM   v$session s JOIN v$process p ON s.paddr = p.addr WHERE  s.sid = (select distinct sid from v$mystat)`,
@@ -261,7 +277,7 @@ async function run() {
       // It does not affect how the FARM column itself is represented.
       //        { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
-    simpleout(result7.rows);
+    simpleout(result8.rows);
   } catch (err) {
     console.error(err);
   } finally {
