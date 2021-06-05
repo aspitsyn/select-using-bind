@@ -30,7 +30,9 @@ async function run() {
 
 
     var dateComponent = () => {
-    var mo = (dateObject.getMonth() + 1) //months from 1-12
+      const itsstart = Date.now()
+      const dateObject = new Date(itsstart)
+        var mo = (dateObject.getMonth() + 1) //months from 1-12
     var month =  (mo < 10) ? 0 + mo.toString() : mo
     var da = dateObject.getDate()
      var day =  (da < 10) ? 0 + da.toString() : da
