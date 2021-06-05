@@ -270,7 +270,7 @@ async function run() {
     );
     simpleout(result7.rows);
     // Get tracefile name
-    result7 = await connection.execute(
+    result8 = await connection.execute(
       `SELECT s.sid, p.tracefile FROM   v$session s JOIN v$process p ON s.paddr = p.addr WHERE  s.sid = (select distinct sid from v$mystat)`,
       []
       // outFormat determines whether rows will be in arrays or JavaScript objects.
