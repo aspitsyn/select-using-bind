@@ -11,7 +11,7 @@ var bindobj = require("./bindobj.js");
 var bindobjtypes = require("./bindobjtypes.js");
 var SQLtext = "";
 var SQLtext1 = "";
-var slogfile = "/tmp/allstats001.log";
+var slogfile = "/tmp/allstats_";
 var pathToFile = "sqltext.txt";
 var clob = "";
 
@@ -27,6 +27,19 @@ async function run() {
     result6,
     result7,
     result8;
+
+
+    var dateComponent = () => {
+    var mo = (dateObject.getMonth() + 1) //months from 1-12
+    var month =  (mo < 10) ? 0 + mo.toString() : mo
+    var da = dateObject.getDate()
+     var day =  (da < 10) ? 0 + da.toString() : da
+       var year = dateObject.getFullYear()
+         var hrs = dateObject.getHours()
+           var hours =  (hrs < 10) ? 0 + hrs.toString() : hrs
+             var mins = dateObject.getMinutes()
+              return `  ${year}${month}${day}_${hours}${mins} `
+              }
 
   //read sqltext from file
   function doReadFile(callback) {
@@ -71,7 +84,7 @@ async function run() {
   function simpleout(rows) {
     console.log(rows);
     for (var i = 0; i < rows.length; i++) {
-      fs.writeFileSync(slogfile, rows[i] + "\r\n", { flag: "a" }, function (
+      fs.writeFileSync(slogfile + dateComponent() + ".log", rows[i] + "\r\n", { flag: "a" }, function (
         err
       ) {
         if (err) {
