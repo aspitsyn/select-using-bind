@@ -40,7 +40,7 @@ async function run() {
          var hrs = dateObject.getHours()
            var hours =  (hrs < 10) ? 0 + hrs.toString() : hrs
              var mins = dateObject.getMinutes()
-              return `  ${year}${month}${day}_${hours}${mins} `
+              return `${year}${month}${day}_${hours}${mins}`
               }
 
   //read sqltext from file
