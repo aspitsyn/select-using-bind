@@ -63,6 +63,10 @@ node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR -udt -n
 
 or
 
+node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR -udt -indcost 100
+
+or
+
 node select-using-bind.js -sql <B><I>sql_id</I></B> -cs EXACT -schema HR -refcursor
 
 Use named command line parameters -sql if you'd like to get sql_fulltext from sqlarea or -cs if you'd like to set parameter

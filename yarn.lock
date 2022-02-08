@@ -2,6 +2,7 @@
 # yarn lockfile v1
 
 
-oracledb@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/oracledb/-/oracledb-4.0.0.tgz#cf102be555a46a37b6a9d2ebf452cb0f2618297f"
+"oracledb@^4.2.0":
+  "integrity" "sha512-07ZylNcUB9wknsiRa7dNqDWgGK3loP8eNWuoCjsiCOZ19PA1g8QLu+0gah7ty82VXl/MOQYFCMl5OpjD9Aqjcw=="
+  "resolved" "https://registry.npmjs.org/oracledb/-/oracledb-4.2.0.tgz"
+  "version" "4.2.0"

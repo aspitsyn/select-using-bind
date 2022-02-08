@@ -26,7 +26,8 @@ async function run() {
     result5,
     result6,
     result7,
-    result8;
+    result8,
+    result9;
 
 
     var dateComponent = () => {
@@ -190,13 +191,25 @@ async function run() {
       );
     }
 
+    //optimizer_index_cost_adj default 100
+    if (nameIndex("-indcost") > -1) {
+      const indcost = nameValue(nameIndex("-indcost"));
+      result5 = await connection.execute(
+        `alter session set optimizer_index_cost_adj = ${indcost}`,
+        {},
+        {
+          resultSet: false,
+        }
+      );
+    }
+
     //use_nosegment_indexes
     // const str_0 = 'TRUE';
     // const str_t = `alter session set "_use_nosegment_indexes" = ${str_0}`;
     // console.log(str_t);
     if (nameIndex("-nosegment") > -1) {
       const nosegment = nameValue(nameIndex("-nosegment"));
-      result5 = await connection.execute(
+      result6 = await connection.execute(
         `alter session set "_use_nosegment_indexes" = ${nosegment}`,
         {},
         {
@@ -235,7 +248,7 @@ async function run() {
     var t0 = process.hrtime();
 
     // Run SQL
-    result6 = await connection.execute(
+    result7 = await connection.execute(
       //   // The statement to execute
       getsqltext(clob),
       bindobj,
@@ -250,10 +263,10 @@ async function run() {
     //   Fewer than numRows rows => this was the last set of rows to get
     //   Exactly numRows rows    => there may be more rows to fetch
     if (nameIndex("-refcursor") > -1) {
-      for (let key in result6.outBinds) {
+      for (let key in result7.outBinds) {
         // console.log("Cursor metadata:");
         // console.log(result6.outBinds[key].metaData);
-        const resultSet = result6.outBinds[key];
+        const resultSet = result7.outBinds[key];
         let rows;
         let rowscnt = 0;
         do {
@@ -268,31 +281,35 @@ async function run() {
         arr[0] = "Number of rows: " + rowscnt;
       }
     } else {
-      if (typeof result6.rows === "undefined") {
+      if (typeof result7.rows === "undefined") {
         arr[0] = "Number of rows: 0";
       } else {
-        arr[0] = "Number of rows: " + result6.rows.length;
+        arr[0] = "Number of rows: " + result7.rows.length;
       }
     }
     var t2 = process.hrtime(t0);
     arr[1] = `SQL execution time (hr): ${t2[0]}s ${t2[1] / 1000000}ms`;
     simpleout(arr);
     // Get all stats
-    result7 = await connection.execute(
+    result8 = await connection.execute(
       // The statement to execute
       "SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(null,null,'ALL ALLSTATS LAST +outline +peeked_binds +hint_report'))",
       {}
     );
-    simpleout(result7.rows);
+    simpleout(result8.rows);
     // Get tracefile name
-    result8 = await connection.execute(
-      `SELECT s.sid, p.tracefile FROM   v$session s JOIN v$process p ON s.paddr = p.addr WHERE  s.sid = (select distinct sid from v$mystat)`,
+    result9 = await connection.execute(
+      `SELECT s.sid, s.serial#, p.spid, p.tracefile FROM v$session s JOIN v$process p ON s.paddr = p.addr WHERE s.sid = (select distinct sid from v$mystat)`,
       []
       // outFormat determines whether rows will be in arrays or JavaScript objects.
       // It does not affect how the FARM column itself is represented.
       //        { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
-    simpleout(result8.rows);
+     var headarr = [];
+      headarr[0] = 'sid,serial#,spid,tracefile';
+      headarr[1] = '-----------------------------------------------------------' + "\r\n";
+    simpleout(headarr);
+    simpleout(result9.rows);
   } catch (err) {
     console.error(err);
   } finally {
