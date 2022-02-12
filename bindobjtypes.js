@@ -1,5 +1,5 @@
 module.exports = {
-  B2: {
+  B1: {
     oradbtype: "HR.T$ID_TABLE",
     isObj: true,
     vals: [
@@ -15,7 +15,7 @@ module.exports = {
       { ID: 100 },
     ],
   },
-  B3: {
+  B2: {
     oradbtype: "HR.T$ID_TABLE",
     isObj: true,
     vals: [
